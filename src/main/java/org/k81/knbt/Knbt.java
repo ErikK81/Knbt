@@ -12,6 +12,6 @@ public final class Knbt extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Pluin hutdwn logi
+        // Pluin hutdwn log
     }
 }
