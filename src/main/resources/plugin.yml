@@ -2,3 +2,6 @@ name: Knbt
 version: '1.0-SNAPSHOT'
 main: org.k81.knbt.Knbt
 api-version: '1.21'
+commands:
+  Knbt:
+    description: Comando principal do Knbt
