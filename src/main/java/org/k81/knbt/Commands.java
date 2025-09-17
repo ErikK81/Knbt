@@ -13,7 +13,7 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
 
         if (!(sender instanceof Player player)) {
-            Bukkit.getConsoleSender().sendMessage("Console cannot send this command!");
+            Bukkit.getConsoleSender().sendMessage("Console cant execute this command!");
             return true;
         }
 
@@ -28,64 +28,26 @@ public class Commands implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "set":
-                if (args.length >= 3) {
-                    // Junta args[2...] no caso de o valor ter espaço
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 2; i < args.length; i++) {
-                        if (i > 2) sb.append(" ");
-                        sb.append(args[i]);
-                    }
-                    Utils.SetNbt(player, args[1], sb.toString());
-                    player.sendMessage("§aTag '" + args[1] + "' definida para '" + sb + "'.");
-                } else {
-                    player.sendMessage("§cUse: /knbt set <tag> <valor>");
+                if (args.length == 3){
+                    Utils.SetTag(player, args[1], args[2]);
                 }
                 break;
 
             case "get":
-                if (args.length == 2) {
-                    Object value = Utils.GetNbt(player, args[1]);
-                    if (value != null) {
-                        player.sendMessage("§aTag '" + args[1] + "' = " + value);
-                    } else {
-                        player.sendMessage("§eTag '" + args[1] + "' não encontrada.");
-                    }
-                } else {
-                    player.sendMessage("§cUse: /knbt get <tag>");
-                }
+                    Utils.GetTag(player, args[1]);
                 break;
 
             case "remove":
-                if (args.length == 2) {
-                    Utils.RemoveNbt(player, args[1]);
-                    player.sendMessage("§aTag '" + args[1] + "' removida.");
-                } else {
-                    player.sendMessage("§cUse: /knbt remove <tag>");
-                }
+                    // Utils.RemoveNbt(player, args[1]);
                 break;
 
             case "list":
-                if (args.length == 1) {
-                    var keys = Utils.ListNbt(player);
-                    if (keys.isEmpty()) {
-                        player.sendMessage("§eNenhuma tag encontrada neste item.");
-                    } else {
-                        player.sendMessage("§aTags do item:");
-                        for (String key : keys) {
-                            Object value = Utils.GetNbt(player, key);
-                            player.sendMessage(" - " + key + " = " + value);
-                        }
-                    }
-                } else {
-                    player.sendMessage("§cUse: /knbt list");
-                }
-                break;
-
+                    Utils.listTag(player); // Map<String, Object>
+                    break;
             default:
-                player.sendMessage("§cComando inválido! Use: /knbt <set|get|remove|list>");
+                player.sendMessage("§cInvalid command! Use: /knbt <set|get|remove|list>");
                 break;
         }
-
-        return true;
+    return true;
     }
 }
