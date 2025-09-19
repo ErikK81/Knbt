@@ -38,11 +38,11 @@ public class Commands implements CommandExecutor {
                 break;
 
             case "remove":
-                    // Utils.RemoveNbt(player, args[1]);
+                    Utils.RemoveTag(player, args[1]);
                 break;
 
             case "list":
-                    Utils.listTag(player); // Map<String, Object>
+                    Utils.listTag(player);
                     break;
             default:
                 player.sendMessage("§cInvalid command! Use: /knbt <set|get|remove|list>");

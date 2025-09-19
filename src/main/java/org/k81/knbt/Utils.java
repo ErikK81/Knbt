@@ -31,6 +31,28 @@ public class Utils {
     }
 
 
+    public static void RemoveTag(Player p, String key) {
+        ItemStack item = p.getInventory().getItemInMainHand();
+        if (item.getType().isAir()) {
+            p.sendMessage("§cVocê não está segurando nenhum item.");
+            return;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        NamespacedKey nKey = new NamespacedKey("knbt", key.toLowerCase());
+
+        if (meta.getPersistentDataContainer().has(nKey, PersistentDataType.STRING)) {
+            meta.getPersistentDataContainer().remove(nKey);
+            item.setItemMeta(meta);
+            p.sendMessage("§aTag removida §7(" + key + ")");
+        } else {
+            p.sendMessage("§eNenhuma tag encontrada com a chave: " + key);
+        }
+    }
+
+
     public static void GetTag(Player p, String key) {
         ItemStack item = p.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
@@ -69,7 +91,7 @@ public class Utils {
                 pdc.getKeys().forEach(k -> {
                     String value = pdc.get(k, PersistentDataType.STRING);
                     if (value != null) {
-                        p.sendMessage("§7BukkitValue: §e\"" +k.getNamespace() + ":" + k.getKey() + "\" = §f" + value);
+                        p.sendMessage("§7PublicBukkitValues: §e\"" +k.getNamespace() + ":" + k.getKey() + "\": §f" + value);
                     }
                 });
             }
