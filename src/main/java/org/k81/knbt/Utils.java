@@ -6,6 +6,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -13,15 +15,19 @@ public class Utils {
 
     public static void SetTag(Player p, String key, String value) {
         ItemStack item = p.getInventory().getItemInMainHand();
-        if (item.getType().isAir()) return;
+        if (item.getType().isAir()) {
+            p.sendMessage("§cVocê não está segurando nenhum item.");
+            return;
+        }
 
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        meta.setItemModel(NamespacedKey.minecraft(key));
-
+        NamespacedKey nKey = new NamespacedKey("knbt", key.toLowerCase());
+        meta.getPersistentDataContainer().set(nKey, PersistentDataType.STRING, value);
         item.setItemMeta(meta);
-        p.sendMessage("§6--- Value " + value + " set on " + key + "---");
+
+        p.sendMessage("§aTag salva §7(" + key + ": " + value + ")");
     }
 
 
@@ -51,18 +57,22 @@ public class Utils {
         p.sendMessage("Amount: §f" + item.getAmount());
         p.sendMessage("CustomModelData: §f" + (meta.hasCustomModelData() ? meta.getCustomModelData() : "None"));
 
-        if (meta.hasLore()) {
-            p.sendMessage("Lore:");
-            Objects.requireNonNull(meta.lore()).forEach(line -> p.sendMessage("§7- " + line));
-        } else {
-            p.sendMessage("Lore: None");
-        }
-
         p.sendMessage("§6--- ItemMeta ---");
         for (Map.Entry<String, Object> raw : meta.serialize().entrySet()){
-
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            p.sendMessage("§b" + gson.toJson(raw.getKey()) + "§7 = §f" + gson.toJson(raw.getValue()));
+            if (raw.getKey().equals("custom-model-data")) continue;
+            if (!raw.getKey().equals("PublicBukkitValues")) {
+                p.sendMessage("§b" + gson.toJson(raw.getKey()) + "§7 = §f" + gson.toJson(raw.getValue()));
+            } else {
+                PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+                pdc.getKeys().forEach(k -> {
+                    String value = pdc.get(k, PersistentDataType.STRING);
+                    if (value != null) {
+                        p.sendMessage("§7BukkitValue: §e\"" +k.getNamespace() + ":" + k.getKey() + "\" = §f" + value);
+                    }
+                });
+            }
         }
     }
 }
